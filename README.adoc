@@ -1,0 +1,409 @@
+= Fachklausur in POS (Java)
+:source-highlighter: rouge
+:icons: font
+:pdf-page-header: true
+:lang: DE
+:hyphens:
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+____
+[.lead]
+Klassen: 6AAIF, 6BAIF, 6CAIF, 6AKIF, 6BKIF +
+Datum: MI, 4. Juni 2025 +
+Arbeitszeit: 5 UE
+____
+
+Auf Ihrem Laufwerk R befindet sich der Ordner _SPG_Fachtheorie_.
+Darin befindet sich ein Gradle Multi-Module Projekt mit den Modulen _aufgabe1_, _aufgabe2_ und _aufgabe3_.
+Öffnen Sie den Ordner in IntelliJ IDEA.
+Arbeiten Sie ausschließlich in diesem Projekt.
+Da das Projekt auf dem Netzlaufwerk liegt, muss am Ende nicht extra auf ein Abgabelaufwerk kopiert werden.
+Beenden Sie am Ende Ihrer Arbeit alle Programme und lassen Sie den PC eingeschaltet.
+
+[IMPORTANT]
+====
+Füllen Sie die Datei _README.md_ in _SPG_Fachtheorie/README.md_ mit Ihren Daten (Klasse, Name und Accountname) aus.
+*Falls Sie dies nicht machen, kann Ihre Arbeit nicht bewertet werden!*
+====
+
+== Teilaufgabe 1: Object Relation Mapping
+
+Ein kleines Kundenverwaltungssystem soll mit Hilfe von JPA/Hibernate und Spring Boot implementiert werden.
+Es soll Kunden (_Customer_) und Artikel (_Article_) erfassen können.
+Wenn Kunden einen oder mehrere Artikel kaufen, wird eine Rechnung (_Invoice_) angelegt.
+Die Rechnung hat mehrere Zeilen (_InvoiceItem_).
+Die Zeile beschreibt, in welcher Menge und zu welchem Preis ein konkreter Artikel gekauft wurde.
+Beachten Sie dabei die geforderten Anforderungen an einzelne Modellklassen.
+
+[plantuml,format=svg]
+----
+include::aufgabe1.puml[]
+----
+
+=== Arbeitsauftrag
+
+==== Erstellung der Modelklassen
+
+Implementieren Sie das dargestellte Diagramm als JPA Entity-Klassen.
+Im Modul _aufgabe1_ befinden sich leere Klassen sowie die Klasse _BaseEntity_, die Sie nutzen sollen.
+Beachten Sie bei der Umsetzung folgende Punkte:
+
+* Legen Sie nötige Konstruktoren an.
+  Ein _public_ Konstruktor soll alle im Modell enthaltenen Felder initialisieren.
+  Ergänzen Sie die für JPA nötigen _protected_ No-Arg Konstruktoren.
+* Beachten Sie Attribute Constraints wie *not null* (`nn`).
+* Strings sollen - wenn nicht anders angegeben - mit einer Maximallänge von 255 Zeichen definiert werden (JPA Default).
+* Der Preis soll mit 9 Stellen (5 Vorkomma- und 4 Nachkommastellen) gespeichert werden.
+  Sie können `@Column(precision = 9, scale = 4)` verwenden.
+* Das Entity _Address_ soll in _Company_ und _Customer_ als _Value Object_ definiert werden.
+  Beachten Sie, dass in _Customer_ eine Liste von Value Objects definiert werden muss.
+* Verwenden Sie eigene primary keys mit dem Namen _id_ (autoincrement über _BaseEntity_), außer im Modell ist mit _PK_ explizit ein Schlüssel angegeben.
+* Speichern Sie die enum _CustomerType_ in _Customer_ als String in der Datenbank ab.
+* Die Klassen _Employee_ und _Customer_ erben von der Klasse _User_.
+  Verwenden Sie Single Table Inheritance.
+* Erstellen Sie passende Spring Data JPA Repository-Interfaces im Package _persistence_.
+
+[NOTE]
+====
+Damit Sie eine Liste von Value Objects mit JPA erstellen können, verwenden Sie folgende Konfiguration:
+
+[source,java]
+-----
+@ElementCollection
+private List<Address> addresses = new ArrayList<>();
+-----
+====
+
+==== Verfassen von Tests
+
+In der Klasse _InvoiceContextTests_ im Modul _aufgabe1_ (unter _test_) sollen Testmethoden verfasst werden, die die Richtigkeit Ihrer Implementierung beweisen sollen.
+
+* _persistEnumSuccessTest_ beweist, dass die Enum _CustomerType_ in _Customer_ korrekt gespeichert wird.
+* _persistValueObjectInCompanySuccessTest_ beweist, dass Sie ein Entity vom Typ _Company_ mit einer Adresse als Value Object speichern können.
+* _persistValueObjectsInCustomerSuccessTest_ beweist, dass Sie ein Entity vom Typ _Customer_ mit einer Liste von Adressen als Value Object speichern können.
+* _persistInvoiceItemSuccessTest_ beweist, dass Sie ein Entity vom Typ _InvoiceItem_ in der Datenbank speichern können.
+
+=== Bewertung
+
+[%header,cols="6a,^1a",format=tsv]
+|===
+Aufgabe 1 (33 Punkte in Summe, 36 %)	Punkte
+Article: Alle geforderten Constraints und Beschränkungen wurden umgesetzt.	1
+Article: Die Klasse verwendet Number als primary key.	1
+Article: Der vorgegebene Test InsertArticleTest läuft durch.	2
+Address: Die Klasse enthält alle in der Angabe vorgesehenen Properties.	1
+Address: Die Klasse besitzt keine ID und wird nicht als Tabelle verwendet.	1
+Company: Alle geforderten Constraints und Beschränkungen wurden umgesetzt.	1
+Company: Die Klasse besitzt ein korrekt konfiguriertes Value Object "Address".	1
+Company: Der vorgegebene Test InsertCompanyTest läuft durch.	2
+Employee: Alle geforderten Constraints und Beschränkungen wurden umgesetzt.	1
+Employee: Der vorgegebene Test InsertEmployeeTest läuft durch.	2
+Customer: Alle geforderten Constraints und Beschränkungen wurden umgesetzt.	1
+Customer: Die Enumeration Type wird als String in der Datenbank gespeichert.	1
+Customer: Der vorgegebene Test InsertCustomerTest läuft durch.	2
+Customer: Der vorgegebene Test InsertCustomerWithAddressesTest läuft durch.	2
+Invoice: Alle geforderten Constraints und Beschränkungen wurden umgesetzt.	1
+Invoice: Der vorgegebene Test InsertInvoiceTest läuft durch.	2
+InvoiceItem: Alle geforderten Constraints und Beschränkungen wurden umgesetzt.	1
+InvoiceItem: Der vorgegebene Test InsertInvoiceItemTest läuft durch.	2
+persistEnumSuccessTest: Der Test ist richtig aufgebaut.	1
+persistEnumSuccessTest: Der Test läuft durch.	1
+persistValueObjectInCompanySuccessTest: Der Test ist richtig aufgebaut.	1
+persistValueObjectInCompanySuccessTest: Der Test läuft durch.	1
+persistValueObjectInCustomerSuccessTest: Der Test ist richtig aufgebaut.	1
+persistValueObjectInCustomerSuccessTest: Der Test läuft durch.	1
+persistInvoiceItemSuccessTest: Der Test ist richtig aufgebaut.	1
+persistInvoiceItemSuccessTest: Der Test läuft durch.	1
+|===
+
+== Teilaufgabe 2: Abfragen und Servicemethoden
+
+Das nachfolgende Modell zeigt eine Umsetzung eines Scooter Sharing Services.
+Kunden können zwischen 2 Abrechnungsmethoden wählen:
+
+* _Pay as you go:_ Der Kunde zahlt pro gefahrenen Kilometer.
+* _Included Kilometers:_ Der Kunde zahlt einen monatlichen Beitrag und erhält eine bestimmte Anzahl an Freikilometern.
+  Die freien Kilometer gelten pro Fahrt.
+  Hat ein Kunde z. B. 2 Freikilometer, so wird bei Fahrt A, die 3 km lang ist, 1 km berechnet.
+  Bei Fahrt B, die 4 km lang ist, werden 2 km berechnet.
+
+Beim Entsperren mit der App wird ein _Trip_ gestartet.
+Der integrierte Tracker des Scooters übermittelt in regelmäßigen Abständen die Position und den Kilometerstand als _TripLog_.
+Dadurch ist eine Abrechnung auch dann möglich, wenn kein durchgehendes GPS Signal verfügbar ist (z. B. Unterführungen, etc).
+Die Länge einer Fahrt (_Trip_) ist dann die Differenz zwischen niedrigsten und höchsten Kilometerstand der _TripLogs_ dieser Fahrt.
+
+Die Preise für den gefahrenen Kilometer variieren je nach Modell und sind in der _Scooter_ Klasse hinterlegt.
+Scooter mit Sitz und hoher Reichweite haben z. B. einen höheren Preis pro Kilometer als Scooter ohne Sitz.
+
+Wird ein Scooter abgestellt, wird der _Trip_ beendet und die Felder _End_ und _ParkingLocation_ werden gesetzt.
+So ist erkennbar, welche Trips noch laufen und welche bereits beendet sind.
+
+[plantuml,format=svg]
+----
+include::aufgabe2.puml[]
+----
+
+=== Arbeitsauftrag
+
+Im Modul _aufgabe2_ stehen vollständig implementierte JPA Entities und Spring Data JPA Repositories zur Verfügung.
+Das Model ist bereits im Package _model_ implementiert.
+*Sie müssen keine Implementierung des Modelles vornehmen, sondern es in Ihren Servicemethoden verwenden.*
+
+==== Implementierung von Servicemethoden
+
+Führen Sie Ihre Implementierungen in _ScooterService.java_ im Package _service_ durch.
+Verwenden Sie die über Dependency Injection bereitgestellten Repositories.
+
+
+===== public Trip addTrip(Long userId, Long scooterId, LocalDateTime begin)
+
+Diese Methode soll einen Trip in der Datenbank anlegen.
+Dabei sollen folgende Randbedingungen geprüft werden:
+
+* Wird die _userId_ nicht gefunden, so ist eine _ScooterServiceException_ mit dem Text _Invalid user._ zu werfen.
+* Wird die _scooterId_ nicht gefunden, so ist eine _ScooterServiceException_ mit dem Text _Invalid scooter._ zu werfen.
+* Existiert ein offener Trip für diesen Scooter in der Datenbank, so ist eine _ScooterServiceException_ mit dem Text _Scooter is not parked._ zu werfen.
+  Sie erkennen offene Trips daran, dass _Trip.end_ keinen Wert (_null_) hat.
+
+Sind alle Bedingungen erfüllt, fügen Sie den neuen Trip mit dem übergebenen User, Scooter und der Beginnzeit in die Datenbank ein.
+
+_Verwenden Sie den bereitgestellten Unittest addTripTest in ScooterServiceTests.java, um die Richtigkeit Ihrer Methode zu prüfen._
+
+===== public List<TripDto> getTripInfos(LocalDateTime beginFrom, LocalDateTime beginTo)
+
+Diese Methode soll Informationen zu allen Trips abfragen, die in einem gewissen Zeitraum begonnen haben.
+In Ihrer Serviceklasse ist ein Record als Rückgabetyp definiert:
+
+[source,java]
+----
+public record TripDto(
+    Long id, LocalDateTime begin, LocalDateTime end, Long scooterId,
+    String scooterModel, Long userId, String userEmail, boolean isParked) {}
+----
+
+Das Property _isParked_ hat den Wert _true_ wenn _Trip.end_ nicht null ist.
+Fragen Sie die benötigten Informationen zur Erstellung von _TripDto_ aus der Datenbank ab.
+
+_Verwenden Sie den bereitgestellten Unittest getTripInfosTest in ScooterServiceTests.java, um die Richtigkeit Ihrer Methode zu prüfen._
+
+===== public int calculateTripLength(Long tripId)
+
+Diese Methode soll die Länge eines Trips in Metern berechnen.
+Ein Trip hat mehrere _TripLogs_.
+Dies sind Punkte, die z. B. von einem GPS Modul am Scooter übermittelt werden.
+Um die Länge eines Trips in Metern zu berechnen, verwenden Sie den kleinsten und größten Kilometerstand (_TripLog.mileageInMeters_) des Logs dieses Trips.
+Die Differenz zwischen diesen beiden Werten ist der gesuchte Wert.
+
+_Verwenden Sie den bereitgestellten Unittest calculateTripLengthTest in ScooterServiceTests.java, um die Richtigkeit Ihrer Methode zu prüfen._
+
+
+===== public BigDecimal calculatePrice(Long tripId)
+
+Diese Methode soll den Preis für einen Trip berechnen.
+Dabei müssen folgende Werte berücksichtigt werden:
+
+* Ein User hat freie Kilometer (_User.freeKilometers_).
+  Diese müssen von der Triplänge abgezogen werden.
+* Der Preis pro Kilometer ist in _Scooter.pricePerKilometer_ gespeichert.
+
+Wird der Trip nicht gefunden, so ist der Preis 0 zurückzugeben.
+
+_Verwenden Sie den bereitgestellten Unittest calculatePriceTest in ScooterServiceTests.java, um die Richtigkeit Ihrer Methode zu prüfen._
+
+=== Bewertung
+
+[%header,cols="6a,^1a",format=tsv]
+|===
+Aufgabe 2  (26 Punkte in Summe, 28 %)	Punkte
+addTrip: Die Methode berücksichtigt alle Randbedingungen korrekt.	2
+addTrip: Die Methode fügt den neuen Trip korrekt in die Datenbank ein.	1
+addTrip: Der Unittest addTripTest läuft durch.	3
+getTripInfos: Die Methode filtert korrekt die Daten.	1
+getTripInfos: Die Methode fragt korrekt ab und projiziert das Ergebnis auf die DTO Klasse.	2
+getTripInfos: Der Unittest getTripInfosTest läuft durch.	3
+calculateTripLength: Die Methode filtert korrekt die Daten.	1
+calculateTripLength: Die Methode führt die Berechnung korrekt durch.	3
+calculateTripLength: Der Unittest calculateTripLengthTest läuft durch.	3
+calculatePrice: Die Methode filtert korrekt die Daten.	1
+calculatePrice: Die Methode führt die Berechnung korrekt durch.	3
+calculatePrice: Der Unittest calculatePriceTest läuft durch.	3
+
+|===
+== Teilaufgabe 3: REST(ful) API
+
+Für das vorige Modell der Scooter Sharing App soll eine RESTful API implementiert werden.
+Wenn Sie das Modul _aufgabe2_ starten, steht Ihnen unter der URL _http://localhost:8080/swagger-ui.html_ ein Endpoint Explorer zur Verfügung.
+Die Datenbank beinhaltet Musterdaten (via _data.sql_), sodass Sie die Funktionalität Ihrer Controller damit testen können.
+
+=== Arbeitsauftrag
+
+Implementieren Sie die folgenden REST API Routen.
+In _TripsController.java_ im Package _aufgabe3.controller_ steht dafür ein leerer Controller bereit.
+Über Dependency Injection wird ein mit Musterdaten gefülltes _TripRepository_ bereitgestellt.
+Sie können die Abfragen direkt in den Controllermethoden implementieren.
+Achten Sie bei Fehlern auf eine RFC-9457 kompatible Antwort, indem Sie `ProblemDetail.forStatusAndDetail()` mit geeignetem Statuscode verwenden.
+
+==== GET /trips/{id}?includeLog=true
+
+Diese REST API Route soll einen bestimmten Trip mitsamt der Logeinträge retournieren.
+Wird der optionale Parameter _includeLog_ mit dem Wert _true_ mitgegeben (_false_ ist der Default-Wert), soll die Antwort die Logeinträge enthalten.
+Ist der Parameter _false_, soll ein leeres Array zurückgegeben werden.
+
+Erstellen Sie zuerst die Felder in den Klassen _TripResponse.java_ und _TripLogResponse.java_ im Package _aufgabe3.viewmodels_, sodass die Daten dem nachfolgenden Schema entsprechen.
+
+
+.Erwartete HTTP-Antworten:
+[%header,cols="1,5"]
+|===
+| HTTP Status | Bedingung
+| 200	| Ein _TripResponse_ mit leerem Array für _logs_, wenn der Parameter _includeLog_ false ist.
+| 200	| Ein _TripResponse_ mit einem Array von _TripLogResponse_, wenn der Parameter _includeLog_ true ist.
+| 200	| Ein _TripResponse_, welches optional _TripLogResponses_ enthält.
+| 404	| Für eine unbekannte Id. (inkl. RFC-9457 ProblemDetail im Body)
+|===
+
+.Response für _GET /trips/1?includeLog=false_
+[source,json]
+----
+{
+  "id": 1,
+  "userEmail": "alice@example.com",
+  "scooterManufacturer": "Xiaomi",
+  "begin": "2025-02-07T10:46:03",
+  "end": null,
+  "logs": []
+}
+----
+
+.Response für _GET /trips/1?includeLog=true_
+[source,json]
+----
+{
+  "id": 1,
+  "userEmail": "alice@example.com",
+  "scooterManufacturer": "Xiaomi",
+  "begin": "2025-02-07T10:46:03",
+  "end": null,
+  "logs": [
+    {
+      "timestamp": "2025-02-07T10:46:03",
+      "longitude": 16.48055,
+      "latitude": 48.16812,
+      "mileageInMeters": 12397
+    },
+    {
+      "timestamp": "2025-02-07T10:48:03",
+      "longitude": 16.60784,
+      "latitude": 48.30346,
+      "mileageInMeters": 12663
+    },
+    {
+      "timestamp": "2025-02-07T10:52:03",
+      "longitude": 15.85092,
+      "latitude": 48.21999,
+      "mileageInMeters": 13510
+    },
+    {
+      "timestamp": "2025-02-07T10:54:03",
+      "longitude": 15.44802,
+      "latitude": 48.26622,
+      "mileageInMeters": 14396
+    }
+  ]
+}
+----
+
+==== PATCH /trips/{id}
+
+Dieser Endpunkt soll die Daten am Ende eines Trips aktualisieren.
+Dabei werden die Felder _end_ und _parkingLocation_ auf die entsprechenden Werte gesetzt.
+Achten Sie darauf, dass der Wert von _Trip.end_ vor der Aktualisierung _null_ sein muss.
+Es dürfen keine schon beendeten Trips nochmals beendet werden.
+Ist der Trip bereits beendet, liefern Sie HTTP 400 mit der Meldung _Trip already ended._
+
+Verwenden Sie das Request Object in _UpdateTripRequest.java_ im Package _aufgabe3.viewmodels_, um den Payload zu typisieren.
+Achten Sie darauf, dass nur gültige Werte für _longitude_ (-180 bis +180) und _latitude_ (-90 bis +90) übermittelt werden können.
+Stellen Sie dies durch entsprechende Jakarta Validation Annotations im Request Object sicher.
+
+NOTE: Der Trip mit der ID 4 ist nicht beendet, er kann zum Testen verwendet werden.
+
+.Erwartete HTTP-Antworten:
+[%header,cols="1,5"]
+|===
+| HTTP Status | Bedingung
+| 204	| No content, wenn erfolgreich aktualisiert wurde.
+| 400	| Wenn ein Trip, der bereits beendet ist, modifiziert werden soll. (inkl. RFC-9457 ProblemDetail im Body)
+| 400	| Wenn die Werte für _longitude_ oder _latitude_ ungültig sind. (inkl. RFC-9457 ProblemDetail im Body)
+| 404	| Für eine unbekannte Id. (inkl. RFC-9457 ProblemDetail im Body)
+|===
+
+.Payload für _PATCH /trips/4_
+[source,json]
+----
+{
+  "end": "2025-05-30T10:13:29",
+  "longitude": 16.4,
+  "latitude": 48.1
+}
+----
+
+==== Verfassen von Integration Tests
+
+In _TripsControllerIT.java_ (unter _test_) sollen Integration Tests verfasst werden.
+Es soll jede Zeile in den Tabellen bei _Erwartete HTTP-Antworten_ geprüft werden.
+Verwenden Sie dafür REST Assured und die per `@Autowired` bereitgestellten Repositories:
+
+[%header,cols="2,3"]
+|===
+| Methode / Annotation | Beschreibung
+| `@SpringBootTest(webEnvironment = RANDOM_PORT)` | Startet die Applikation auf einem zufälligen Port.
+| `@LocalServerPort` | Injiziert den Port in eine Variable.
+| `RestAssured.port = port` | Setzt den Port für REST Assured.
+| `given().when().get("/trips/{id}", 1).then().statusCode(200)` | Beispiel für einen GET Request.
+| `given().contentType(ContentType.JSON).body(command).when().patch("/trips/{id}", 4).then().statusCode(204)` | Beispiel für einen PATCH Request.
+|===
+
+=== Bewertung
+
+[%header,cols="6a,^1a",format=tsv]
+|===
+Aufgabe 3 (33 Punkte in Summe, 36 %)	Punkte
+GET /trips/{id} filtert die Daten korrekt.	1
+GET /trips/{id} liefert das korrekte Verhalten im Fall einer nicht vorhandenen Id.	1
+GET /trips/{id} verwendet den Query Parameter includeLog korrekt.	3
+Die Klasse TripResponse wurde korrekt implementiert.	2
+Die Klasse TripLogResponse wurde korrekt implementiert.	1
+GET /trips/{id} liefert das korrekte Ergebnis im Erfolgsfall für includeLog = false.	2
+GET /trips/{id} liefert das korrekte Ergebnis im Erfolgsfall für includeLog = true.	2
+Der Integration Test beweist die korrekte Implementierung von GET /trips/{id} im Erfolgsfall.	2
+Der Integration Test beweist die korrekte Implementierung von GET /trips/{id} bei Fehlerzuständen.	2
+Der Integration Test für GET /trips/{id} läuft durch.	3
+PATCH /trips/{id} fragt korrekt die Werte aus der Datenbank ab.	1
+PATCH /trips/{id} liefert das korrekte Verhalten im Fall einer nicht vorhandenen Id.	1
+PATCH /trips/{id} liefert das korrekte Verhalten im Fall eines bereits beendeten Trips.	1
+PATCH /trips/{id} aktualisiert den Wert in der Datenbank.	2
+Die Request Klasse UpdateTripRequest kann den Payload typisieren.	1
+Die Request Klasse UpdateTripRequest besitzt die definierten Validierungen.	1
+Der Integration Test beweist die korrekte Implementierung von PATCH /trips/{id} im Erfolgsfall.	2
+Der Integration Test beweist die korrekte Implementierung von PATCH /trips/{id} bei Fehlerzuständen.	2
+Der Integration Test für PATCH /trips/{id} läuft durch.	3
+
+|===
+
+=== Beurteilung:
+
+92 - 81 Punkte: Sehr gut (1) +
+80 - 70 Punkte: Gut (2) +
+69 - 58 Punkte: Befriedigend (3) +
+57 - 46 Punkte: Genügend (4) +
+unter 46 Punkte: Nicht genügend (5)
+
+
+**Viel Erfolg!**

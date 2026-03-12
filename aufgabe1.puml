@@ -1,0 +1,74 @@
+@startuml
+hide empty methods
+
+entity Article << Entity >> {
+    Number: int <<nn>>
+    Name: String <<nn>>
+    Price: BigDecimal <<nn>>
+}
+
+note left of Article::Number
+  PK
+end note
+
+class Address << (V,#CCEEFF) ValueObject >> {
+    Street: String <<nn>>
+    Zip: String <<nn>>
+    City: String <<nn>>
+}
+
+entity Company << Entity >> {
+    Name: String <<nn>>
+    Address: Address <<nn>>
+}
+
+Address --* Company : contains
+
+entity User << Entity >> {
+    FirstName: String <<nn>>
+    LastName: String <<nn>>
+    Email: String <<nn>>
+}
+
+enum CustomerType << Enum >> {
+    B2B
+    B2C
+}
+
+entity Customer << Entity >> {
+    Addresses: List<Address> <<nn>>
+    Type: CustomerType <<nn>>
+    Note: String
+}
+
+Address --* Customer : contains
+Customer --> CustomerType : is
+Customer -up-|> User
+
+entity Employee << Entity >> {
+    Company: Company <<nn>>
+}
+
+Employee -up-|> User
+Employee "0..n" --> "1" Company : works for
+
+entity Invoice << Entity >> {
+    Number: int <<nn>>
+    Date: LocalDateTime <<nn>>
+    Customer: Customer <<nn>>
+    Employee: Employee <<nn>>
+}
+
+Invoice "0..n" --> "1" Customer : is for
+Invoice "0..n" --> "1" Employee : has
+
+entity InvoiceItem << Entity >> {
+    Invoice: Invoice <<nn>>
+    Article: Article <<nn>>
+    Quantity: int <<nn>>
+    Price: BigDecimal <<nn>>
+}
+
+InvoiceItem "0..n" --> "1" Article : is for
+InvoiceItem "0..n" --> "1" Invoice : belongs to
+@enduml

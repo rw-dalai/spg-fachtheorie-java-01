@@ -1,0 +1,60 @@
+@startuml
+hide empty attributes
+hide empty members
+
+class Location << (V,#CCEEFF) ValueObject >> {
+    Longitude: BigDecimal <<nn>>
+    Latitude: BigDecimal <<nn>>
+    --
+    +Location(longitude: BigDecimal, latitude: BigDecimal)
+}
+
+entity Scooter << Entity >> {
+    Id: Long <<nn>>
+    ManufacturerId: String <<nn>>
+    Model: String <<nn>>
+    PricePerKilometer: BigDecimal <<nn>>
+    --
+    +Scooter(manufacturerId: String, model: String,
+    pricePerKilometer: BigDecimal)
+}
+
+entity User << Entity >> {
+    Id: Long <<nn>>
+    Email: String <<nn>>
+    FreeKilometers: int <<nn>>
+    --
+    +User(email: String, freeKilometers: int)
+}
+
+entity Trip << Entity >> {
+    Id: Long <<nn>>
+    User: User <<nn>>
+    Scooter: Scooter <<nn>>
+    Begin: LocalDateTime <<nn>>
+    End: LocalDateTime
+    ParkingLocation: Location
+    TripLogs: List<TripLog> <<nn>>
+    --
+    +Trip(user: User, scooter: Scooter, begin: LocalDateTime,
+    end: LocalDateTime, parkingLocation: Location)
+}
+
+Trip "0..n" --> "1" User
+Trip "0..n" --> "1" Scooter
+Trip --> Location : parking at
+
+entity TripLog << Entity >> {
+    Id: Long <<nn>>
+    Trip: Trip <<nn>>
+    Timestamp: LocalDateTime <<nn>>
+    Location: Location <<nn>>
+    MileageInMeters: int <<nn>>
+    --
+    +TripLog(trip: Trip, timestamp: LocalDateTime,
+    location: Location, mileageInMeters: int)
+}
+
+TripLog "0..n" --* "1" Trip
+TripLog --> Location : recorded at
+@enduml
