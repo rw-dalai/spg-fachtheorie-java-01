@@ -28,7 +28,7 @@ public class Scooter extends BaseEntity {
 
     @OneToMany(mappedBy = "scooter")
     @ToString.Exclude
-    private List<Trip> trips = new ArrayList<>();
+    private final List<Trip> trips = new ArrayList<>();
 
     protected Scooter() {
     }

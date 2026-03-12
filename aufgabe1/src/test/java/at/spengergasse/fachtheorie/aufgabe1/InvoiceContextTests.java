@@ -15,6 +15,15 @@ public class InvoiceContextTests {
 
     @Test
     void persistEnumSuccessTest() {
+
+        // Given / Arrange
+
+
+        // When / Act
+
+
+        // Then / Assert
+
         throw new UnsupportedOperationException("TODO: Implement this test");
     }
 

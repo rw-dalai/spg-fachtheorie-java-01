@@ -24,11 +24,15 @@ import java.util.List;
  * Optional:
  *   - .orElseThrow(() -> new ScooterServiceException("..."))
  *   - .orElse(null)
+ *   - .orElseGet(() -> ...)
  *
  * Streams:
  *   - list.stream().map(x -> ...).toList()
  *   - list.stream().mapToInt(X::getY).max().orElse(0)
  *   - list.stream().mapToInt(X::getY).min().orElse(0)
+ *   - list.stream().mapToInt(X::getY).sum()
+ *   - list.stream().filter(x -> ...).sort().toList()
+ *
  *
  * Entity-Navigation:
  *   - trip.getScooter().getModel()      (über @ManyToOne)

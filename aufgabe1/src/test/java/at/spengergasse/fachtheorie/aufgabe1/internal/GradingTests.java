@@ -32,9 +32,9 @@ public class GradingTests {
             Integer.class);
 
         assertThat(count)
-            .as("Less than 3 tables found. Check your entities & mappings.")
+            .as("Less than 5 tables found. Check your entities & mappings.")
             .isNotNull()
-            .isGreaterThanOrEqualTo(3);
+            .isGreaterThanOrEqualTo(6);
     }
 
     @Test
